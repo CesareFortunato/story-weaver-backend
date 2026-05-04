@@ -14,7 +14,7 @@
 
 <h2>Scelte</h2>
 
-<a href="#">+ Aggiungi scelta</a>
+<a href="{{ route('stories.nodes.choices.create', [$story, $node]) }}">+ Aggiungi scelta</a>
 
 @if ($node->choices->isEmpty())
     <p>Questo nodo non ha ancora scelte.</p>
@@ -22,13 +22,39 @@
     <ul>
         @foreach ($node->choices as $choice)
             <li>
-                {{ $choice->text }}
+                <strong>{{ $choice->text }}</strong>
 
                 @if ($choice->nextNode)
-                    → {{ $choice->nextNode->title }}
+                    → {{ $choice->nextNode->title ?? 'Nodo senza titolo' }}
                 @else
                     → Nessuna destinazione
                 @endif
+
+                <br>
+                Ordine: {{ $choice->order }}
+
+                @if ($choice->tokens->isNotEmpty())
+                    <br>
+                    Token dati:
+                    @foreach ($choice->tokens as $token)
+                        <span>
+                            @if ($token->image)
+                                <img src="{{ asset('storage/' . $token->image) }}" width="24">
+                            @endif
+                            {{ $token->name }}
+                        </span>
+                    @endforeach
+                @endif
+
+                <br>
+
+                <a href="{{ route('stories.nodes.choices.edit', [$story, $node, $choice]) }}">Edit</a>
+
+                <form action="{{ route('stories.nodes.choices.destroy', [$story, $node, $choice]) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button>Delete</button>
+                </form>
             </li>
         @endforeach
     </ul>

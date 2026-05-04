@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoryController;
@@ -25,6 +26,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('stories', StoryController::class);
     Route::resource('stories.nodes', NodeController::class);
     Route::resource('stories.tokens', TokenController::class)->except(['show']);
+
+    Route::resource('stories.nodes.choices', ChoiceController::class)->except(['index', 'show']);
 });
 
 require __DIR__ . '/auth.php';

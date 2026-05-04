@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Choice extends Model
 {
+
+    protected $fillable = [
+        'node_id',
+        'text',
+        'next_node_id',
+        'order',
+    ];
     public function node()
     {
         return $this->belongsTo(Node::class);
