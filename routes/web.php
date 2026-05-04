@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StoryController;
 use App\Models\Story;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/test', function () {
-    $story = \App\Models\Story::with('nodes.choices.tokens')->first();
+Route::middleware(['auth'])->group(function () {
+    Route::resource('stories', StoryController::class);
 
-    return $story;
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
