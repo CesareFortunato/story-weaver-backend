@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,10 @@ return new class extends Migration
     {
         Schema::create('choices', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('node_id')->constrained()->cascadeOnDelete();
+            $table->string('text');
+            $table->foreignId('next_node_id')->nullable()->constrained('nodes')->nullOnDelete();
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }

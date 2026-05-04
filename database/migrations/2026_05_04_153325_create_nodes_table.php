@@ -10,11 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('tokens', function (Blueprint $table) {
+        Schema::create('nodes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('story_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
+            $table->string('title')->nullable();
+            $table->text('text');
             $table->string('image')->nullable();
+            $table->boolean('is_start')->default(false);
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('tokens');
+        Schema::dropIfExists('nodes');
     }
 };
