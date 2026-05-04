@@ -52,14 +52,28 @@
 
 <h2>Token</h2>
 
-<a href="#">+ Crea Token</a>
+<a href="{{ route('stories.tokens.create', $story) }}">+ Crea Token</a>
 
 @if ($story->tokens->isEmpty())
     <p>Nessun token creato.</p>
 @else
     <ul>
         @foreach ($story->tokens as $token)
-            <li>{{ $token->name }}</li>
+            <li>
+                @if ($token->image)
+                    <img src="{{ asset('storage/' . $token->image) }}" width="40">
+                @endif
+
+                {{ $token->name }}
+
+                <a href="{{ route('stories.tokens.edit', [$story, $token]) }}">Edit</a>
+
+                <form action="{{ route('stories.tokens.destroy', [$story, $token]) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button>Delete</button>
+                </form>
+            </li>
         @endforeach
     </ul>
 @endif
