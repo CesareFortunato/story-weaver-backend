@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoryController;
 use App\Models\Story;
@@ -21,7 +22,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('stories', StoryController::class);
-
+    Route::resource('stories.nodes', NodeController::class);
 });
 
 require __DIR__ . '/auth.php';

@@ -9,7 +9,7 @@
 
 <h2>Nodi</h2>
 
-<a href="#">+ Crea Nodo</a>
+<a href="{{ route('stories.nodes.create', $story) }}">+ Crea Nodo</a>
 
 @if ($story->nodes->isEmpty())
     <p>Nessun nodo creato.</p>
@@ -32,6 +32,17 @@
                 <br>
 
                 Scelte: {{ $node->choices->count() }}
+
+                <br>
+
+                <a href="{{ route('stories.nodes.show', [$story, $node]) }}">View</a>
+                <a href="{{ route('stories.nodes.edit', [$story, $node]) }}">Edit</a>
+
+                <form action="{{ route('stories.nodes.destroy', [$story, $node]) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button>Delete</button>
+                </form>
             </li>
         @endforeach
     </ul>
