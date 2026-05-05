@@ -2,6 +2,17 @@
 
 <p>{{ $story->description }}</p>
 
+@if (!empty($warnings))
+    <div style="background: #ffdddd; padding: 10px; margin-bottom: 20px;">
+        <strong>Attenzione:</strong>
+        <ul>
+            @foreach ($warnings as $warning)
+                <li>{{ $warning }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <a href="{{ route('stories.index') }}">← Torna alle stories</a>
 <a href="{{ route('stories.edit', $story) }}">Modifica story</a>
 
