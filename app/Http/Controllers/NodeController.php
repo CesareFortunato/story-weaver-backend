@@ -58,9 +58,11 @@ class NodeController extends Controller
      */
     public function show(Story $story, Node $node)
     {
+        $incomingChoices = \App\Models\Choice::where('next_node_id', $node->id)->get();
+
         $node->load(['choices.nextNode', 'choices.tokens']);
 
-        return view('nodes.show', compact('story', 'node'));
+        return view('nodes.show', compact('story', 'node', 'incomingChoices'));
     }
 
     /**
