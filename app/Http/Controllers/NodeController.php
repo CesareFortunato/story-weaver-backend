@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Node;
 use App\Models\Story;
 use Illuminate\Http\Request;
+use App\Models\Choice;
 
 class NodeController extends Controller
 {
@@ -58,7 +59,7 @@ class NodeController extends Controller
      */
     public function show(Story $story, Node $node)
     {
-        $incomingChoices = \App\Models\Choice::where('next_node_id', $node->id)->get();
+        $incomingChoices = Choice::where('next_node_id', $node->id)->get();
 
         $node->load(['choices.nextNode', 'choices.tokens']);
 

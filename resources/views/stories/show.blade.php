@@ -1,3 +1,7 @@
+@extends('layouts.admin')
+
+@section('content')
+
 <h1>{{ $story->title }}</h1>
 
 <p>{{ $story->description }}</p>
@@ -88,3 +92,5 @@
         @endforeach
     </ul>
 @endif
+
+@endsection
