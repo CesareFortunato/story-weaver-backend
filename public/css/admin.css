@@ -220,3 +220,69 @@ body {
 .sidebar-footer {
     margin-top: 40px;
 }
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d4d4d8;
+    border-radius: 12px;
+    font-size: 15px;
+    box-sizing: border-box;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #18181b;
+}
+
+.form-error {
+    color: #dc2626;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.preview-image {
+    max-width: 260px;
+    border-radius: 14px;
+    margin-top: 10px;
+}
+
+.flow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.choice-card {
+    border: 1px solid #e4e4e7;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+    background: #fafafa;
+}
+
+.token-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e4e4e7;
+    padding: 6px 10px;
+    border-radius: 999px;
+    margin: 4px;
+    font-size: 13px;
+}

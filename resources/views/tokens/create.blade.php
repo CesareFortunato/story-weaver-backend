@@ -1,17 +1,35 @@
-<h1>Crea Token per: {{ $story->title }}</h1>
+@extends('layouts.admin')
 
-<form method="POST" action="{{ route('stories.tokens.store', $story) }}" enctype="multipart/form-data">
-    @csrf
+@section('content')
 
-    <input type="text" name="name" placeholder="Nome token" required>
+    <div class="page-header">
+        <h1>Crea nuovo token</h1>
+        <p class="page-subtitle">
+            I token sono oggetti, ricompense o elementi narrativi che il giocatore può ottenere tramite le scelte.
+        </p>
+    </div>
 
-    <br><br>
+    <section class="section-card">
+        <form method="POST" action="{{ route('stories.tokens.store', $story) }}" enctype="multipart/form-data">
+            @csrf
 
-    <input type="file" name="image">
+            <div class="form-group">
+                <label>Nome token</label>
+                <input type="text" name="name" value="{{ old('name') }}" required placeholder="Es. Chiave dorata">
+                @error('name') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <br><br>
+            <div class="form-group">
+                <label>Immagine token</label>
+                <input type="file" name="image">
+                @error('image') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <button>Salva Token</button>
-</form>
+            <div class="actions">
+                <button class="btn">Salva token</button>
+                <a class="btn light" href="{{ route('stories.show', $story) }}">Annulla</a>
+            </div>
+        </form>
+    </section>
 
-<a href="{{ route('stories.show', $story) }}">← Torna alla story</a>
+@endsection

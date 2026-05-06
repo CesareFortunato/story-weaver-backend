@@ -12,7 +12,7 @@ class StoryController extends Controller
      */
     public function index()
     {
-        $stories = Story::latest()->get();
+        $stories = Story::withCount(['nodes', 'tokens'])->latest()->get();
 
         return view('stories.index', compact('stories'));
     }
@@ -45,27 +45,27 @@ class StoryController extends Controller
     {
         $story->load(['nodes.choices', 'tokens']);
 
-    $warnings = [];
+        $warnings = [];
 
-    // 1. Nessun nodo start
-    if (!$story->nodes->contains('is_start', true)) {
-        $warnings[] = '⚠️ La storia non ha un nodo iniziale';
-    }
-
-    // 2. Nodi senza scelte
-    foreach ($story->nodes as $node) {
-        if ($node->choices->isEmpty()) {
-            $warnings[] = "⚠️ Il nodo '{$node->title}' non ha scelte";
+        // 1. Nessun nodo start
+        if (!$story->nodes->contains('is_start', true)) {
+            $warnings[] = '⚠️ La storia non ha un nodo iniziale';
         }
 
-        foreach ($node->choices as $choice) {
-            if (!$choice->next_node_id) {
-                $warnings[] = "⚠️ La scelta '{$choice->text}' non ha destinazione";
+        // 2. Nodi senza scelte
+        foreach ($story->nodes as $node) {
+            if ($node->choices->isEmpty()) {
+                $warnings[] = "⚠️ Il nodo '{$node->title}' non ha scelte";
+            }
+
+            foreach ($node->choices as $choice) {
+                if (!$choice->next_node_id) {
+                    $warnings[] = "⚠️ La scelta '{$choice->text}' non ha destinazione";
+                }
             }
         }
-    }
 
-    return view('stories.show', compact('story', 'warnings'));
+        return view('stories.show', compact('story', 'warnings'));
     }
 
     /**

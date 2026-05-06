@@ -1,23 +1,43 @@
-<h1>Modifica Token</h1>
+@extends('layouts.admin')
 
-<form method="POST" action="{{ route('stories.tokens.update', [$story, $token]) }}" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+@section('content')
 
-    <input type="text" name="name" value="{{ $token->name }}" required>
+    <div class="page-header">
+        <h1>Modifica token</h1>
+        <p class="page-subtitle">
+            Aggiorna nome o immagine del token.
+        </p>
+    </div>
 
-    <br><br>
+    <section class="section-card">
+        <form method="POST" action="{{ route('stories.tokens.update', [$story, $token]) }}" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-    @if ($token->image)
-        <img src="{{ asset('storage/' . $token->image) }}" width="120">
-        <br><br>
-    @endif
+            <div class="form-group">
+                <label>Nome token</label>
+                <input type="text" name="name" value="{{ old('name', $token->name) }}" required>
+                @error('name') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <input type="file" name="image">
+            @if ($token->image)
+                <div class="form-group">
+                    <label>Immagine attuale</label>
+                    <img class="preview-image" src="{{ asset('storage/' . $token->image) }}">
+                </div>
+            @endif
 
-    <br><br>
+            <div class="form-group">
+                <label>Nuova immagine</label>
+                <input type="file" name="image">
+                @error('image') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <button>Aggiorna Token</button>
-</form>
+            <div class="actions">
+                <button class="btn">Aggiorna token</button>
+                <a class="btn light" href="{{ route('stories.show', $story) }}">Annulla</a>
+            </div>
+        </form>
+    </section>
 
-<a href="{{ route('stories.show', $story) }}">← Torna alla story</a>
+@endsection

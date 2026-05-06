@@ -1,52 +1,62 @@
-<h1>Modifica scelta</h1>
+@extends('layouts.admin')
 
-<p>Nodo: <strong>{{ $node->title ?? 'Nodo senza titolo' }}</strong></p>
+@section('content')
 
-<form method="POST" action="{{ route('stories.nodes.choices.update', [$story, $node, $choice]) }}">
-    @csrf
-    @method('PUT')
+    <div class="page-header">
+        <h1>Modifica scelta</h1>
+        <p class="page-subtitle">
+            Aggiorna testo, destinazione e token assegnati da questa scelta.
+        </p>
+    </div>
 
-    <label>Testo scelta</label>
-    <br>
-    <input type="text" name="text" value="{{ $choice->text }}" required>
+    <section class="section-card">
+        <form method="POST" action="{{ route('stories.nodes.choices.update', [$story, $node, $choice]) }}">
+            @csrf
+            @method('PUT')
 
-    <br><br>
+            <div class="form-group">
+                <label>Testo scelta</label>
+                <input type="text" name="text" value="{{ old('text', $choice->text) }}" required>
+                @error('text') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <label>Nodo di destinazione</label>
-    <br>
-    <select name="next_node_id">
-        <option value="">-- Nessuna destinazione --</option>
-        @foreach ($nodes as $targetNode)
-            <option value="{{ $targetNode->id }}" @selected($choice->next_node_id === $targetNode->id)>
-                {{ $targetNode->title ?? 'Nodo senza titolo' }}
-            </option>
-        @endforeach
-    </select>
+            <div class="form-group">
+                <label>Nodo di destinazione</label>
+                <select name="next_node_id">
+                    <option value="">-- Nessuna destinazione --</option>
+                    @foreach ($nodes as $targetNode)
+                        <option value="{{ $targetNode->id }}" @selected(old('next_node_id', $choice->next_node_id) == $targetNode->id)>
+                            {{ $targetNode->title ?? 'Nodo senza titolo' }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('next_node_id') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <br><br>
+            <div class="form-group">
+                <label>Ordine visualizzazione</label>
+                <input type="number" name="order" value="{{ old('order', $choice->order) }}" min="0">
+                @error('order') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <label>Ordine</label>
-    <br>
-    <input type="number" name="order" value="{{ $choice->order }}" min="0">
+            <div class="form-group">
+                <label>Token assegnati</label>
 
-    <br><br>
+                @forelse ($tokens as $token)
+                    <label style="display:block; margin-bottom:8px;">
+                        <input type="checkbox" name="tokens[]" value="{{ $token->id }}" @checked(collect(old('tokens', $choice->tokens->pluck('id')->toArray()))->contains($token->id))>
+                        {{ $token->name }}
+                    </label>
+                @empty
+                    <p class="section-help">Nessun token creato per questa storia.</p>
+                @endforelse
+            </div>
 
-    <label>Token assegnati</label>
-    <br>
+            <div class="actions">
+                <button class="btn">Aggiorna scelta</button>
+                <a class="btn light" href="{{ route('stories.nodes.show', [$story, $node]) }}">Annulla</a>
+            </div>
+        </form>
+    </section>
 
-    @forelse ($tokens as $token)
-        <label>
-            <input type="checkbox" name="tokens[]" value="{{ $token->id }}" @checked($choice->tokens->contains($token->id))>
-            {{ $token->name }}
-        </label>
-        <br>
-    @empty
-        <p>Nessun token creato per questa storia.</p>
-    @endforelse
-
-    <br>
-
-    <button>Aggiorna scelta</button>
-</form>
-
-<a href="{{ route('stories.nodes.show', [$story, $node]) }}">← Torna al nodo</a>
+@endsection

@@ -1,34 +1,56 @@
-<h1>Modifica Nodo</h1>
+@extends('layouts.admin')
 
-<form method="POST" action="{{ route('stories.nodes.update', [$story, $node]) }}" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+@section('content')
 
-    <input type="text" name="title" value="{{ $node->title }}" placeholder="Titolo nodo">
+    <div class="page-header">
+        <h1>Modifica nodo</h1>
+        <p class="page-subtitle">
+            Aggiorna il contenuto della scena o impostala come nodo iniziale.
+        </p>
+    </div>
 
-    <br><br>
+    <section class="section-card">
+        <form method="POST" action="{{ route('stories.nodes.update', [$story, $node]) }}" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-    <textarea name="text" required>{{ $node->text }}</textarea>
+            <div class="form-group">
+                <label>Titolo nodo</label>
+                <input type="text" name="title" value="{{ old('title', $node->title) }}">
+                @error('title') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <br><br>
+            <div class="form-group">
+                <label>Testo scena</label>
+                <textarea name="text" rows="6" required>{{ old('text', $node->text) }}</textarea>
+                @error('text') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    @if ($node->image)
-        <img src="{{ asset('storage/' . $node->image) }}" width="200">
-        <br><br>
-    @endif
+            @if ($node->image)
+                <div class="form-group">
+                    <label>Immagine attuale</label>
+                    <img class="preview-image" src="{{ asset('storage/' . $node->image) }}">
+                </div>
+            @endif
 
-    <input type="file" name="image">
+            <div class="form-group">
+                <label>Nuova immagine</label>
+                <input type="file" name="image">
+                @error('image') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
 
-    <br><br>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_start" value="1" @checked(old('is_start', $node->is_start))>
+                    Questo è il nodo iniziale della storia
+                </label>
+            </div>
 
-    <label>
-        <input type="checkbox" name="is_start" value="1" @checked($node->is_start)>
-        Nodo iniziale
-    </label>
+            <div class="actions">
+                <button class="btn">Aggiorna nodo</button>
+                <a class="btn light" href="{{ route('stories.nodes.show', [$story, $node]) }}">Annulla</a>
+            </div>
+        </form>
+    </section>
 
-    <br><br>
-
-    <button>Aggiorna Nodo</button>
-</form>
-
-<a href="{{ route('stories.nodes.show', [$story, $node]) }}">← Torna al nodo</a>
+@endsection

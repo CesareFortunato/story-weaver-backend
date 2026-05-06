@@ -1,91 +1,113 @@
-<h1>{{ $node->title ?? 'Nodo senza titolo' }}</h1>
+@extends('layouts.admin')
 
-@if ($node->is_start)
-    <p style="color: green;">⭐ Nodo iniziale</p>
-@endif
+@section('content')
 
-<p>{{ $node->text }}</p>
+    <div class="page-header">
+        <h1>{{ $node->title ?? 'Nodo senza titolo' }}</h1>
 
-{{-- IMMAGINE --}}
-@if ($node->image)
-    <img src="{{ asset('storage/' . $node->image) }}" width="300">
-@endif
+        <p class="page-subtitle">
+            Questa pagina mostra il contenuto del nodo, le sue scelte e il flusso narrativo collegato.
+        </p>
 
-<hr>
+        <div class="actions">
+            <a class="btn light" href="{{ route('stories.show', $story) }}">← Torna alla story</a>
+            <a class="btn secondary" href="{{ route('stories.nodes.edit', [$story, $node]) }}">Modifica nodo</a>
+            <a class="btn" href="/play/{{ $node->id }}" target="_blank">🎮 Gioca da qui</a>
+        </div>
+    </div>
 
-{{-- FLOW PREVIEW --}}
-<h2>Flow</h2>
+    <section class="section-card">
+        <div class="section-header">
+            <div>
+                <h2>Scena</h2>
+                <p class="section-help">Testo e immagine associati a questo nodo.</p>
+            </div>
 
-<h3>⬅️ Arriva da:</h3>
+            @if ($node->is_start)
+                <span class="badge start">START</span>
+            @endif
+        </div>
 
-@if ($incomingChoices->isEmpty())
-    <p>Nessun nodo porta qui</p>
-@else
-    <ul>
-        @foreach ($incomingChoices as $choice)
-            <li>
-                {{ $choice->node->title ?? 'Nodo senza titolo' }}
-                → "{{ $choice->text }}"
-            </li>
-        @endforeach
-    </ul>
-@endif
+        <p>{{ $node->text }}</p>
 
-<h3>➡️ Va a:</h3>
+        @if ($node->image)
+            <img class="preview-image" src="{{ asset('storage/' . $node->image) }}" alt="{{ $node->title }}">
+        @endif
+    </section>
 
-@if ($node->choices->isEmpty())
-    <p>Nessuna uscita da questo nodo</p>
-@else
-    <ul>
-        @foreach ($node->choices as $choice)
-            <li>
-                "{{ $choice->text }}" →
+    <div class="flow-grid">
 
-                @if ($choice->nextNode)
-                    {{ $choice->nextNode->title ?? 'Nodo senza titolo' }}
-                @else
-                    <span style="color: red;">Nessuna destinazione</span>
-                @endif
-            </li>
-        @endforeach
-    </ul>
-@endif
+        <section class="section-card">
+            <h2>⬅️ Arriva da</h2>
+            <p class="section-help">Nodi e scelte che portano a questa scena.</p>
 
-<hr>
+            @forelse ($incomingChoices as $choice)
+                <div class="choice-card">
+                    <strong>{{ $choice->node->title ?? 'Nodo senza titolo' }}</strong>
+                    <p>tramite scelta: “{{ $choice->text }}”</p>
+                </div>
+            @empty
+                <div class="empty-state">
+                    Nessun nodo porta qui.
+                </div>
+            @endforelse
+        </section>
 
-{{-- SCELTE --}}
-<h2>Scelte</h2>
+        <section class="section-card">
+            <h2>➡️ Va a</h2>
+            <p class="section-help">Destinazioni raggiungibili dalle scelte di questo nodo.</p>
 
-<a href="{{ route('stories.nodes.choices.create', [$story, $node]) }}">
-    + Aggiungi scelta
-</a>
+            @forelse ($node->choices as $choice)
+                <div class="choice-card">
+                    <strong>{{ $choice->text }}</strong>
 
-@if ($node->choices->isEmpty())
-    <p>Questo nodo non ha ancora scelte.</p>
-@else
-    <ul>
-        @foreach ($node->choices as $choice)
-            <li style="margin-bottom: 15px;">
+                    <p>
+                        Destinazione:
+                        @if ($choice->nextNode)
+                            {{ $choice->nextNode->title ?? 'Nodo senza titolo' }}
+                        @else
+                            <span style="color:#dc2626;">Nessuna destinazione</span>
+                        @endif
+                    </p>
+                </div>
+            @empty
+                <div class="empty-state">
+                    Questo nodo non ha ancora uscite.
+                </div>
+            @endforelse
+        </section>
 
-                <strong>{{ $choice->text }}</strong>
+    </div>
 
-                <br>
+    <section class="section-card">
+        <div class="section-header">
+            <div>
+                <h2>Scelte</h2>
+                <p class="section-help">Le scelte determinano il prossimo nodo e possono dare token al giocatore.</p>
+            </div>
 
-                @if ($choice->nextNode)
-                    → {{ $choice->nextNode->title ?? 'Nodo senza titolo' }}
-                @else
-                    → <span style="color: red;">Nessuna destinazione</span>
-                @endif
+            <a class="btn" href="{{ route('stories.nodes.choices.create', [$story, $node]) }}">+ Aggiungi scelta</a>
+        </div>
 
-                <br>
-                Ordine: {{ $choice->order }}
+        @forelse ($node->choices as $choice)
+            <article class="choice-card">
+                <h3>{{ $choice->text }}</h3>
 
-                {{-- TOKEN --}}
+                <div class="node-meta">
+                    <span class="badge">Ordine: {{ $choice->order }}</span>
+
+                    @if ($choice->nextNode)
+                        <span class="badge">Va a: {{ $choice->nextNode->title ?? 'Nodo senza titolo' }}</span>
+                    @else
+                        <span class="badge">Nessuna destinazione</span>
+                    @endif
+                </div>
+
                 @if ($choice->tokens->isNotEmpty())
-                    <br>
-                    Token dati:
+                    <p><strong>Token dati:</strong></p>
+
                     @foreach ($choice->tokens as $token)
-                        <span style="margin-right: 10px;">
+                        <span class="token-preview">
                             @if ($token->image)
                                 <img src="{{ asset('storage/' . $token->image) }}" width="24">
                             @endif
@@ -94,42 +116,24 @@
                     @endforeach
                 @endif
 
-                <br><br>
+                <div class="actions">
+                    <a class="btn light" href="{{ route('stories.nodes.choices.edit', [$story, $node, $choice]) }}">Modifica</a>
 
-                <a href="{{ route('stories.nodes.choices.edit', [$story, $node, $choice]) }}">
-                    Edit
-                </a>
+                    <form class="inline-form" action="{{ route('stories.nodes.choices.destroy', [$story, $node, $choice]) }}"
+                        method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn danger"
+                            onclick="return confirm('Vuoi davvero eliminare questa scelta?')">Elimina</button>
+                    </form>
+                </div>
+            </article>
+        @empty
+            <div class="empty-state">
+                <strong>Nessuna scelta creata.</strong>
+                <p>Aggiungi almeno una scelta per collegare questo nodo al resto della storia.</p>
+            </div>
+        @endforelse
+    </section>
 
-                <form action="{{ route('stories.nodes.choices.destroy', [$story, $node, $choice]) }}" method="POST"
-                    style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button>Delete</button>
-                </form>
-
-            </li>
-        @endforeach
-    </ul>
-@endif
-
-<hr>
-
-{{-- AZIONI --}}
-<h3>Azioni</h3>
-
-<a href="{{ route('stories.nodes.edit', [$story, $node]) }}">
-    Modifica nodo
-</a>
-
-<br><br>
-
-<a href="{{ route('stories.show', $story) }}">
-    ← Torna alla story
-</a>
-
-<br><br>
-
-{{-- KILLER FEATURE --}}
-<a href="/play/{{ $node->id }}" target="_blank">
-    🎮 Gioca da questo nodo
-</a>
+@endsection
