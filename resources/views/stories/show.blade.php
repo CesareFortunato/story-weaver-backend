@@ -2,95 +2,132 @@
 
 @section('content')
 
-<h1>{{ $story->title }}</h1>
+    <div class="page-header">
+        <h1>{{ $story->title }}</h1>
+        <p class="page-subtitle">
+            {{ $story->description }}
+        </p>
 
-<p>{{ $story->description }}</p>
-
-@if (!empty($warnings))
-    <div style="background: #ffdddd; padding: 10px; margin-bottom: 20px;">
-        <strong>Attenzione:</strong>
-        <ul>
-            @foreach ($warnings as $warning)
-                <li>{{ $warning }}</li>
-            @endforeach
-        </ul>
+        <div class="actions">
+            <a class="btn light" href="{{ route('stories.index') }}">← Torna alle storie</a>
+            <a class="btn secondary" href="{{ route('stories.edit', $story) }}">Modifica dettagli storia</a>
+        </div>
     </div>
-@endif
 
-<a href="{{ route('stories.index') }}">← Torna alle stories</a>
-<a href="{{ route('stories.edit', $story) }}">Modifica story</a>
+    @if (!empty($warnings))
+        <div class="warning-box">
+            <h3>Controlli automatici</h3>
+            <p>Prima di pubblicare o testare la storia, controlla questi punti:</p>
 
-<hr>
+            <ul>
+                @foreach ($warnings as $warning)
+                    <li>{{ $warning }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-<h2>Nodi</h2>
+    <div class="quick-guide">
+        <h2>Come costruire questa storia</h2>
+        <ol>
+            <li>Crea i nodi: ogni nodo rappresenta una scena.</li>
+            <li>Crea i token: sono oggetti, ricompense o elementi narrativi.</li>
+            <li>Dentro ogni nodo aggiungi le scelte e collegale al nodo successivo.</li>
+            <li>Usa la pagina del nodo per controllare il flusso della storia.</li>
+        </ol>
+    </div>
 
-<a href="{{ route('stories.nodes.create', $story) }}">+ Crea Nodo</a>
+    <div class="section-grid">
 
-@if ($story->nodes->isEmpty())
-    <p>Nessun nodo creato.</p>
-@else
-    <ul>
-        @foreach ($story->nodes as $node)
-            <li>
-                <strong>
-                    {{ $node->title ?? 'Nodo senza titolo' }}
-                </strong>
+        <section class="section-card">
+            <div class="section-header">
+                <div>
+                    <h2>Nodi della storia</h2>
+                    <p class="section-help">
+                        Ogni nodo è una scena. Collegali tra loro tramite le scelte.
+                    </p>
+                </div>
 
-                @if ($node->is_start)
-                    ⭐ Start
-                @endif
+                <a class="btn" href="{{ route('stories.nodes.create', $story) }}">+ Nuovo nodo</a>
+            </div>
 
-                <br>
+            @forelse ($story->nodes as $node)
+                <article class="node-card">
+                    <h3>
+                        {{ $node->title ?? 'Nodo senza titolo' }}
 
-                {{ Str::limit($node->text, 80) }}
+                        @if ($node->is_start)
+                            <span class="badge start">START</span>
+                        @endif
+                    </h3>
 
-                <br>
+                    <p>{{ Str::limit($node->text, 130) }}</p>
 
-                Scelte: {{ $node->choices->count() }}
+                    <div class="node-meta">
+                        <span class="badge">Scelte: {{ $node->choices->count() }}</span>
+                        <span class="badge">ID nodo: {{ $node->id }}</span>
+                    </div>
 
-                <br>
+                    <div class="actions">
+                        <a class="btn" href="{{ route('stories.nodes.show', [$story, $node]) }}">Apri nodo</a>
+                        <a class="btn light" href="{{ route('stories.nodes.edit', [$story, $node]) }}">Modifica</a>
 
-                <a href="{{ route('stories.nodes.show', [$story, $node]) }}">View</a>
-                <a href="{{ route('stories.nodes.edit', [$story, $node]) }}">Edit</a>
+                        <form class="inline-form" action="{{ route('stories.nodes.destroy', [$story, $node]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn danger">Elimina</button>
+                        </form>
+                    </div>
+                </article>
+            @empty
+                <div class="empty-state">
+                    <strong>Nessun nodo ancora creato.</strong>
+                    <p>Inizia creando il primo nodo della storia. Puoi marcarlo come nodo iniziale.</p>
+                </div>
+            @endforelse
+        </section>
 
-                <form action="{{ route('stories.nodes.destroy', [$story, $node]) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button>Delete</button>
-                </form>
-            </li>
-        @endforeach
-    </ul>
-@endif
+        <aside class="section-card">
+            <div class="section-header">
+                <div>
+                    <h2>Token</h2>
+                    <p class="section-help">
+                        Oggetti o ricompense che il giocatore può ottenere scegliendo certe risposte.
+                    </p>
+                </div>
+            </div>
 
-<hr>
+            <a class="btn" href="{{ route('stories.tokens.create', $story) }}">+ Nuovo token</a>
 
-<h2>Token</h2>
+            <br><br>
 
-<a href="{{ route('stories.tokens.create', $story) }}">+ Crea Token</a>
+            @forelse ($story->tokens as $token)
+                <article class="token-card">
+                    @if ($token->image)
+                        <img src="{{ asset('storage/' . $token->image) }}" width="64">
+                    @endif
 
-@if ($story->tokens->isEmpty())
-    <p>Nessun token creato.</p>
-@else
-    <ul>
-        @foreach ($story->tokens as $token)
-            <li>
-                @if ($token->image)
-                    <img src="{{ asset('storage/' . $token->image) }}" width="40">
-                @endif
+                    <h3>{{ $token->name }}</h3>
 
-                {{ $token->name }}
+                    <div class="actions">
+                        <a class="btn light" href="{{ route('stories.tokens.edit', [$story, $token]) }}">Modifica</a>
 
-                <a href="{{ route('stories.tokens.edit', [$story, $token]) }}">Edit</a>
+                        <form class="inline-form" action="{{ route('stories.tokens.destroy', [$story, $token]) }}"
+                            method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn danger">Elimina</button>
+                        </form>
+                    </div>
+                </article>
+            @empty
+                <div class="empty-state">
+                    <strong>Nessun token.</strong>
+                    <p>Crea token solo se vuoi dare oggetti o ricompense al giocatore.</p>
+                </div>
+            @endforelse
+        </aside>
 
-                <form action="{{ route('stories.tokens.destroy', [$story, $token]) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button>Delete</button>
-                </form>
-            </li>
-        @endforeach
-    </ul>
-@endif
+    </div>
 
 @endsection

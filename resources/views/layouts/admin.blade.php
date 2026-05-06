@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>StoryWeaver Admin</title>
+
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 </head>
 
@@ -11,20 +12,47 @@
 
     <div class="admin-layout">
 
+        {{-- SIDEBAR --}}
         <aside class="sidebar">
-            <h2>StoryWeaver</h2>
 
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-            <a href="{{ route('stories.index') }}">Stories</a>
+            <div>
+                <h1 class="logo">StoryWeaver</h1>
 
-            <hr>
+                <p class="sidebar-subtitle">
+                    Narrative Builder
+                </p>
 
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="btn secondary">Logout</button>
-            </form>
+                <nav class="sidebar-nav">
+
+
+
+                    <a href="{{ route('stories.index') }}">
+                        📚 Stories
+                    </a>
+
+                    <a href="{{ route('stories.create') }}">
+                        ➕ Nuova Story
+                    </a>
+
+                </nav>
+            </div>
+
+            {{-- FOOTER --}}
+            <div class="sidebar-footer">
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+
+                    <button class="btn secondary">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+
         </aside>
 
+        {{-- CONTENT --}}
         <main class="content">
             @yield('content')
         </main>
