@@ -12,7 +12,9 @@
         <div class="actions">
             <a class="btn light" href="{{ route('stories.show', $story) }}">← Torna alla story</a>
             <a class="btn secondary" href="{{ route('stories.nodes.edit', [$story, $node]) }}">Modifica nodo</a>
-            <a class="btn" href="/play/{{ $node->id }}" target="_blank">🎮 Gioca da qui</a>
+            <a class="btn" href="http://localhost:5173/play-node/{{ $node->id }}" target="_blank">
+                🎮 Gioca da qui
+            </a>
         </div>
     </div>
 
