@@ -43,16 +43,22 @@ class StoryController extends Controller
      */
     public function show(Story $story)
     {
-        $story->load(['nodes.choices', 'tokens']);
+        $story->load([
+            'nodes.choices.nextNode',
+            'nodes.choices.tokens',
+            'tokens'
+        ]);
 
         $warnings = [];
 
-        // 1. Nessun nodo start
+        if ($story->nodes->isEmpty()) {
+            $warnings[] = '⚠️ La storia non ha ancora nessun nodo';
+        }
+
         if (!$story->nodes->contains('is_start', true)) {
             $warnings[] = '⚠️ La storia non ha un nodo iniziale';
         }
 
-        // 2. Nodi senza scelte
         foreach ($story->nodes as $node) {
             if ($node->choices->isEmpty()) {
                 $warnings[] = "⚠️ Il nodo '{$node->title}' non ha scelte";
@@ -60,7 +66,7 @@ class StoryController extends Controller
 
             foreach ($node->choices as $choice) {
                 if (!$choice->next_node_id) {
-                    $warnings[] = "⚠️ La scelta '{$choice->text}' non ha destinazione";
+                    $warnings[] = "⚠️ La scelta '{$choice->text}' nel nodo '{$node->title}' non ha destinazione";
                 }
             }
         }

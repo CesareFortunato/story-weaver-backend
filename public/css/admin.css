@@ -286,3 +286,8 @@ body {
     margin: 4px;
     font-size: 13px;
 }
+
+.badge.danger-badge {
+    background: #fecaca;
+    color: #991b1b;
+}

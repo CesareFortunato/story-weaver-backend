@@ -17,7 +17,7 @@
     @if (!empty($warnings))
         <div class="warning-box">
             <h3>Controlli automatici</h3>
-            <p>Prima di pubblicare o testare la storia, controlla questi punti:</p>
+            <p>Prima di testare la storia, controlla questi punti:</p>
 
             <ul>
                 @foreach ($warnings as $warning)
@@ -58,6 +58,12 @@
 
                         @if ($node->is_start)
                             <span class="badge start">START</span>
+                        @endif
+
+                        @if ($node->choices->isEmpty())
+                            <span class="badge danger-badge">
+                                NESSUNA SCELTA
+                            </span>
                         @endif
                     </h3>
 
