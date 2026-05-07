@@ -10,7 +10,7 @@
     </div>
 
     <section class="section-card">
-        <form method="POST" action="{{ route('stories.store') }}">
+        <form method="POST" action="{{ route('stories.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
@@ -25,6 +25,19 @@
                 <label>Descrizione</label>
                 <textarea name="description" rows="5">{{ old('description') }}</textarea>
                 @error('description')
+                    <p class="form-error">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label>Audio ambientale</label>
+                <input type="file" name="ambient_audio" accept="audio/mpeg,audio/wav,audio/ogg">
+
+                <p class="form-help">
+                    Carica un loop ambientale per questa storia. Formati supportati: MP3, WAV, OGG.
+                </p>
+
+                @error('ambient_audio')
                     <p class="form-error">{{ $message }}</p>
                 @enderror
             </div>

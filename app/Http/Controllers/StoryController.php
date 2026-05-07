@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Story;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StoryController extends Controller
 {
@@ -30,10 +31,17 @@ class StoryController extends Controller
      */
     public function store(Request $request)
     {
-        Story::create([
-            'title' => $request->title,
-            'description' => $request->description,
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'ambient_audio' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
         ]);
+
+        if ($request->hasFile('ambient_audio')) {
+            $data['ambient_audio'] = $request->file('ambient_audio')->store('audio', 'public');
+        }
+
+        Story::create($data);
 
         return redirect()->route('stories.index');
     }
@@ -87,10 +95,21 @@ class StoryController extends Controller
      */
     public function update(Request $request, Story $story)
     {
-        $story->update([
-            'title' => $request->title,
-            'description' => $request->description,
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'ambient_audio' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
         ]);
+
+        if ($request->hasFile('ambient_audio')) {
+            if ($story->ambient_audio) {
+                Storage::disk('public')->delete($story->ambient_audio);
+            }
+
+            $data['ambient_audio'] = $request->file('ambient_audio')->store('audio', 'public');
+        }
+
+        $story->update($data);
 
         return redirect()->route('stories.index');
     }

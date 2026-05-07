@@ -9,7 +9,8 @@ class Story extends Model
 
     protected $fillable = [
         'title',
-        'description'
+        'description',
+        'ambient_audio',
     ];
     public function nodes()
     {
