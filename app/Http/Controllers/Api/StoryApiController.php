@@ -67,6 +67,13 @@ class StoryApiController extends Controller
         // Aggiunge URL immagine pronto per il frontend.
         $startNode->image_url = ApiImage::url($startNode->image);
 
+        // Aggiunge URL immagine pronti per il frontend sui token richiesti dalle choices.
+        $startNode->choices->each(function ($choice) {
+            $choice->tokens->each(function ($token) {
+                $token->image_url = ApiImage::url($token->image);
+            });
+        });
+
         return response()->json([
             'success' => true,
             'data' => $startNode,

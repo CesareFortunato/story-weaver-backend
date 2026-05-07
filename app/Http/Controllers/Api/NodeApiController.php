@@ -18,8 +18,15 @@ class NodeApiController extends Controller
             'choices.nextNode:id,title',
         ]);
 
-        // Aggiunge un URL immagine pronto per il frontend, senza modificare il valore originale "image".
+        // Aggiunge un URL immagine pronto per il frontend sul nodo.
         $node->image_url = ApiImage::url($node->image);
+
+        // Aggiunge un URL immagine pronto per il frontend sui token richiesti dalle choices.
+        $node->choices->each(function ($choice) {
+            $choice->tokens->each(function ($token) {
+                $token->image_url = ApiImage::url($token->image);
+            });
+        });
 
         return response()->json([
             'success' => true,
