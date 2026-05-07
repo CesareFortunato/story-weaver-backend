@@ -20,6 +20,15 @@
                 @error('name') <p class="form-error">{{ $message }}</p> @enderror
             </div>
 
+            <div class="form-group">
+                <label>Descrizione token</label>
+                <textarea name="description" rows="4">{{ old('description', $token->description) }}</textarea>
+
+                @error('description')
+                    <p class="form-error">{{ $message }}</p>
+                @enderror
+            </div>
+
             @if ($token->image)
                 <div class="form-group">
                     <label>Immagine attuale</label>

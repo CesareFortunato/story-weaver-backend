@@ -28,7 +28,7 @@ class StoryApiController extends Controller
     {
         $story->load([
             'nodes:id,story_id,title,text,image,is_start',
-            'tokens:id,story_id,name,image',
+            'tokens:id,story_id,name,description,image',
         ]);
 
         // Aggiunge URL immagine utilizzabili dal frontend per ogni nodo.

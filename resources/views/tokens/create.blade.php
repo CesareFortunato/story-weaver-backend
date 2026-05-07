@@ -20,6 +20,16 @@
             </div>
 
             <div class="form-group">
+                <label>Descrizione token</label>
+                <textarea name="description" rows="4"
+                    placeholder="Es. Una chiave antica macchiata di sangue secco...">{{ old('description') }}</textarea>
+
+                @error('description')
+                    <p class="form-error">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
                 <label>Immagine token</label>
                 <input type="file" name="image">
                 @error('image') <p class="form-error">{{ $message }}</p> @enderror

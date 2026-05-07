@@ -9,6 +9,7 @@ class Token extends Model
     protected $fillable = [
         'story_id',
         'name',
+        'description',
         'image',
     ];
     public function story()
