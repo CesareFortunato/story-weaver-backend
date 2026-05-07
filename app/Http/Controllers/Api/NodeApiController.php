@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Node;
+use App\Support\ApiImage;
 
 class NodeApiController extends Controller
 {
@@ -16,6 +17,9 @@ class NodeApiController extends Controller
             'choices.tokens',
             'choices.nextNode:id,title',
         ]);
+
+        // Aggiunge un URL immagine pronto per il frontend, senza modificare il valore originale "image".
+        $node->image_url = ApiImage::url($node->image);
 
         return response()->json([
             'success' => true,
