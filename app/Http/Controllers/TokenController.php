@@ -89,4 +89,26 @@ class TokenController extends Controller
 
         return redirect()->route('stories.show', $story);
     }
+
+    public function bulkCreate(Story $story)
+    {
+        return view('tokens.bulk-create', compact('story'));
+    }
+
+    public function bulkStore(Request $request, Story $story)
+    {
+        $data = $request->validate([
+            'amount' => 'required|integer|min:1|max:20',
+        ]);
+
+        for ($i = 1; $i <= $data['amount']; $i++) {
+
+            Token::create([
+                'story_id' => $story->id,
+                'name' => 'Nuovo token ' . $i,
+            ]);
+        }
+
+        return redirect()->route('stories.show', $story);
+    }
 }

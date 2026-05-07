@@ -28,6 +28,12 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('stories.nodes', NodeController::class)->except(['index']);
 
+    Route::get('/stories/{story}/tokens/bulk-create', [TokenController::class, 'bulkCreate'])
+        ->name('stories.tokens.bulk-create');
+
+    Route::post('/stories/{story}/tokens/bulk-store', [TokenController::class, 'bulkStore'])
+        ->name('stories.tokens.bulk-store');
+
     Route::resource('stories.tokens', TokenController::class)->except(['index', 'show']);
 
     Route::resource('stories.nodes.choices', ChoiceController::class)->except(['index', 'show']);
