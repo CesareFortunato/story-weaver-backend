@@ -75,7 +75,10 @@
                         <form class="inline-form" action="{{ route('stories.nodes.destroy', [$story, $node]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button class="btn danger">Elimina</button>
+                            <button class="btn danger"
+                                onclick="return confirm('Vuoi davvero eliminare questo nodo? Verranno eliminate anche le sue scelte.')">
+                                Elimina
+                            </button>
                         </form>
                     </div>
                 </article>
@@ -116,7 +119,10 @@
                             method="POST">
                             @csrf
                             @method('DELETE')
-                            <button class="btn danger">Elimina</button>
+                            <button class="btn danger"
+                                onclick="return confirm('Vuoi davvero eliminare questo token? Verrà rimosso anche dalle scelte che lo assegnano.')">
+                                Elimina
+                            </button>
                         </form>
                     </div>
                 </article>

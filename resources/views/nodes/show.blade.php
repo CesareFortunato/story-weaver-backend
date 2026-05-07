@@ -123,8 +123,9 @@
                         method="POST">
                         @csrf
                         @method('DELETE')
-                        <button class="btn danger"
-                            onclick="return confirm('Vuoi davvero eliminare questa scelta?')">Elimina</button>
+                        <button class="btn danger" onclick="return confirm('Vuoi davvero eliminare questa scelta?')">
+                            Elimina
+                        </button>
                     </form>
                 </div>
             </article>
