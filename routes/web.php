@@ -16,7 +16,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+
+
     Route::resource('stories', StoryController::class);
+
+    Route::get('/stories/{story}/nodes/bulk-create', [NodeController::class, 'bulkCreate'])
+        ->name('stories.nodes.bulk-create');
+
+    Route::post('/stories/{story}/nodes/bulk-store', [NodeController::class, 'bulkStore'])
+        ->name('stories.nodes.bulk-store');
 
     Route::resource('stories.nodes', NodeController::class)->except(['index']);
 

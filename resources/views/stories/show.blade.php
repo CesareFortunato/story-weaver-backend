@@ -49,6 +49,10 @@
                 </div>
 
                 <a class="btn" href="{{ route('stories.nodes.create', $story) }}">+ Nuovo nodo</a>
+                
+                <a class="btn light" href="{{ route('stories.nodes.bulk-create', $story) }}">
+                    + Crea più nodi
+                </a>
             </div>
 
             @forelse ($story->nodes as $node)

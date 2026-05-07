@@ -110,4 +110,27 @@ class NodeController extends Controller
 
         return redirect()->route('stories.show', $story);
     }
+
+    public function bulkCreate(Story $story)
+    {
+        return view('nodes.bulk-create', compact('story'));
+    }
+
+    public function bulkStore(Request $request, Story $story)
+    {
+        $data = $request->validate([
+            'amount' => 'required|integer|min:1|max:20',
+        ]);
+
+        for ($i = 1; $i <= $data['amount']; $i++) {
+            Node::create([
+                'story_id' => $story->id,
+                'title' => 'Nuovo nodo ' . $i,
+                'text' => 'Testo da completare',
+                'is_start' => false,
+            ]);
+        }
+
+        return redirect()->route('stories.show', $story);
+    }
 }
