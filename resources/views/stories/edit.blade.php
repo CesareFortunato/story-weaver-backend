@@ -10,7 +10,7 @@
     </div>
 
     <section class="section-card">
-        <form method="POST" action="{{ route('stories.update', $story) }}" enctype="multipart/form-data>
+        <form method="POST" action="{{ route('stories.update', $story) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
