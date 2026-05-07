@@ -11,7 +11,12 @@ class StoryApiController extends Controller
 {
     public function index()
     {
-        $stories = Story::select('id', 'title', 'description')->get();
+        $stories = Story::select('id', 'title', 'description', 'ambient_audio')->get();
+
+        $stories->transform(function ($story) {
+            $story->ambient_audio_url = \App\Support\ApiImage::url($story->ambient_audio);
+            return $story;
+        });
 
         return response()->json([
             'success' => true,
@@ -37,6 +42,8 @@ class StoryApiController extends Controller
             $token->image_url = ApiImage::url($token->image);
             return $token;
         });
+
+        $story->ambient_audio_url = ApiImage::url($story->ambient_audio);
 
         return response()->json([
             'success' => true,
@@ -77,7 +84,15 @@ class StoryApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $startNode,
+            'data' => [
+                'story' => [
+                    'id' => $story->id,
+                    'title' => $story->title,
+                    'ambient_audio' => $story->ambient_audio,
+                    'ambient_audio_url' => ApiImage::url($story->ambient_audio),
+                ],
+                'node' => $startNode,
+            ],
         ]);
     }
 }
