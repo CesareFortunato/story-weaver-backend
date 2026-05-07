@@ -65,7 +65,41 @@
                                 NESSUNA SCELTA
                             </span>
                         @endif
+
+
                     </h3>
+
+                    @if ($node->choices->isNotEmpty())
+                        <div class="flow-preview">
+
+                            @foreach ($node->choices as $choice)
+
+                                <div class="flow-item">
+
+                                    <span class="flow-from">
+                                        {{ $node->title ?? 'Nodo' }}
+                                    </span>
+
+                                    <span class="flow-arrow">
+                                        →
+                                    </span>
+
+                                    <span class="flow-to">
+
+                                        @if ($choice->nextNode)
+                                            {{ $choice->nextNode->title ?? 'Nodo senza titolo' }}
+                                        @else
+                                            Fine / Nessuna destinazione
+                                        @endif
+
+                                    </span>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+                    @endif
 
                     <p>{{ Str::limit($node->text, 130) }}</p>
 

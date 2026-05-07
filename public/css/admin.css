@@ -291,3 +291,31 @@ body {
     background: #fecaca;
     color: #991b1b;
 }
+
+.flow-preview {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flow-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: white;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+
+    padding: 10px 14px;
+}
+
+.flow-from,
+.flow-to {
+    font-weight: 600;
+}
+
+.flow-arrow {
+    color: #71717a;
+}
