@@ -107,4 +107,27 @@ class ChoiceController extends Controller
 
         return redirect()->route('stories.nodes.show', [$story, $node]);
     }
+
+    public function bulkCreate(Story $story, Node $node)
+    {
+        return view('choices.bulk-create', compact('story', 'node'));
+    }
+
+    public function bulkStore(Request $request, Story $story, Node $node)
+    {
+        $data = $request->validate([
+            'amount' => 'required|integer|min:1|max:20',
+        ]);
+
+        for ($i = 1; $i <= $data['amount']; $i++) {
+            Choice::create([
+                'node_id' => $node->id,
+                'text' => 'Nuova scelta ' . $i,
+                'next_node_id' => null,
+                'order' => 0,
+            ]);
+        }
+
+        return redirect()->route('stories.nodes.show', [$story, $node]);
+    }
 }

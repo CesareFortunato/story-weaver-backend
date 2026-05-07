@@ -89,6 +89,10 @@
             </div>
 
             <a class="btn" href="{{ route('stories.nodes.choices.create', [$story, $node]) }}">+ Aggiungi scelta</a>
+
+            <a class="btn light" href="{{ route('stories.nodes.choices.bulk-create', [$story, $node]) }}">
+                + Crea più scelte
+            </a>
         </div>
 
         @forelse ($node->choices as $choice)
