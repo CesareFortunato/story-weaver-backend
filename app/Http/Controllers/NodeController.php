@@ -133,4 +133,19 @@ class NodeController extends Controller
 
         return redirect()->route('stories.show', $story);
     }
+
+    public function updatePosition(Request $request, Node $node)
+    {
+        $validated = $request->validate([
+            'position_x' => ['required', 'integer'],
+            'position_y' => ['required', 'integer'],
+        ]);
+
+        $node->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'data' => $node,
+        ]);
+    }
 }

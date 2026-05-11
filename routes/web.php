@@ -20,6 +20,15 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('stories', StoryController::class);
 
+    Route::get('/stories/{story}/graph', [StoryController::class, 'graph'])
+        ->name('stories.graph');
+
+    Route::get('/stories/{story}/graph-data', [StoryController::class, 'graphData'])
+        ->name('stories.graph-data');
+
+    Route::patch('/nodes/{node}/position', [NodeController::class, 'updatePosition'])
+        ->name('nodes.update-position');
+
     Route::get('/stories/{story}/nodes/bulk-create', [NodeController::class, 'bulkCreate'])
         ->name('stories.nodes.bulk-create');
 
