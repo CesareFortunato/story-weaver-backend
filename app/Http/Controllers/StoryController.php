@@ -82,6 +82,59 @@ class StoryController extends Controller
         return view('stories.show', compact('story', 'warnings'));
     }
 
+
+    public function graph(Story $story)
+    {
+        return view('stories.graph', compact('story'));
+    }
+
+    public function graphData(Story $story)
+    {
+        $story->load(['nodes.choices']);
+
+        $nodes = $story->nodes->map(function ($node) {
+            return [
+                'id' => (string) $node->id,
+                'position' => [
+                    'x' => $node->position_x ?? 0,
+                    'y' => $node->position_y ?? 0,
+                ],
+                'data' => [
+                    'label' => $node->is_start
+                        ? '⭐ ' . $node->title
+                        : $node->title,
+                    'node' => $node,
+                ],
+            ];
+        })->values();
+
+        $edges = $story->nodes
+            ->flatMap(function ($node) {
+                return $node->choices
+                    ->filter(fn($choice) => $choice->next_node_id)
+                    ->map(function ($choice) use ($node) {
+                        return [
+                            'id' => 'choice-' . $choice->id,
+                            'source' => (string) $node->id,
+                            'target' => (string) $choice->next_node_id,
+                            'label' => $choice->text,
+                            'animated' => true,
+                        ];
+                    });
+            })
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'nodes' => $nodes,
+                'edges' => $edges,
+            ],
+        ]);
+    }
+
+
+
     /**
      * Show the form for editing the specified resource.
      */
