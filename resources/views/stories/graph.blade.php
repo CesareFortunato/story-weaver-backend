@@ -23,9 +23,9 @@
             <div id="story-graph-root" data-story-id="{{ $story->id }}"
                 data-graph-url="{{ route('stories.graph-data', $story) }}"
                 data-position-url-template="{{ url('/nodes') }}/__NODE_ID__/position"
+                data-node-url-template="{{ url('/stories/' . $story->id . '/nodes') }}/__NODE_ID__"
                 class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-hidden" style="height: 750px;"></div>
         </div>
-    </div>
 
-    @vite(['resources/js/story-graph.jsx'])
+        @vite(['resources/js/story-graph.jsx'])
 </x-app-layout>

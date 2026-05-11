@@ -10,7 +10,14 @@
 
         <div class="actions">
             <a class="btn light" href="{{ route('stories.index') }}">← Torna alle storie</a>
-            <a class="btn secondary" href="{{ route('stories.edit', $story) }}">Modifica dettagli storia</a>
+
+            <a class="btn secondary" href="{{ route('stories.edit', $story) }}">
+                Modifica dettagli storia
+            </a>
+
+            <a class="btn" href="{{ route('stories.graph', $story) }}">
+                Apri Graph Editor
+            </a>
         </div>
     </div>
 

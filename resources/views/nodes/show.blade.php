@@ -15,6 +15,9 @@
             <a class="btn" href="http://localhost:5173/play-node/{{ $node->id }}" target="_blank">
                 🎮 Gioca da qui
             </a>
+            <a class="btn light" href="{{ route('stories.graph', $story) }}">
+                🧭 Torna al Graph Editor
+            </a>
         </div>
     </div>
 
