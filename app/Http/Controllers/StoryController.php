@@ -92,12 +92,21 @@ class StoryController extends Controller
     {
         $story->load(['nodes.choices']);
 
-        $nodes = $story->nodes->map(function ($node) {
+        // Se tutti i nodi sono ancora a posizione 0,0, creo un layout iniziale leggibile
+        $allNodesAreUnplaced = $story->nodes->every(function ($node) {
+            return $node->position_x === 0 && $node->position_y === 0;
+        });
+
+        // Trasforma i nodi Laravel nel formato richiesto da React Flow
+        $nodes = $story->nodes->values()->map(function ($node, $index) use ($allNodesAreUnplaced) {
+            $column = $index % 4;
+            $row = intdiv($index, 4);
+
             return [
                 'id' => (string) $node->id,
                 'position' => [
-                    'x' => $node->position_x ?? 0,
-                    'y' => $node->position_y ?? 0,
+                    'x' => $allNodesAreUnplaced ? $column * 320 : ($node->position_x ?? 0),
+                    'y' => $allNodesAreUnplaced ? $row * 180 : ($node->position_y ?? 0),
                 ],
                 'data' => [
                     'label' => $node->is_start
@@ -108,6 +117,7 @@ class StoryController extends Controller
             ];
         })->values();
 
+        // Trasforma le scelte in collegamenti/frecce del grafo
         $edges = $story->nodes
             ->flatMap(function ($node) {
                 return $node->choices
