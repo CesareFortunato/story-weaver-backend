@@ -116,6 +116,7 @@ function StoryGraph() {
 
     const [nodes, setNodes] = useState([]);
     const [edges, setEdges] = useState([]);
+    const [selectedNode, setSelectedNode] = useState(null);
 
     const nodeTypes = useMemo(() => ({
         storyNode: StoryNode,
@@ -154,6 +155,10 @@ function StoryGraph() {
         );
     }, []);
 
+    function onNodeClick(event, node) {
+        setSelectedNode(node.data.node);
+    }
+
     function onNodeDoubleClick(event, node) {
         const url = nodeUrlTemplate.replace("__NODE_ID__", node.id);
 
@@ -183,20 +188,137 @@ function StoryGraph() {
     }
 
     return (
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeDragStop={onNodeDragStop}
-            onNodeDoubleClick={onNodeDoubleClick}
-            fitView
-        >
-            <Background />
-            <Controls />
-            <MiniMap />
-        </ReactFlow>
+        <div style={{ width: "100%", height: "100%", position: "relative" }}>
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onNodeDragStop={onNodeDragStop}
+                onNodeDoubleClick={onNodeDoubleClick}
+                onNodeClick={onNodeClick}
+                fitView
+            >
+                <Background />
+                <Controls />
+                <MiniMap />
+            </ReactFlow>
+
+            {selectedNode && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 20,
+                        right: 20,
+                        width: "340px",
+                        maxHeight: "85vh",
+                        overflowY: "auto",
+                        background: "#020617",
+                        border: "1px solid #334155",
+                        borderRadius: "16px",
+                        padding: "18px",
+                        color: "#e2e8f0",
+                        zIndex: 50,
+                        boxShadow: "0 20px 50px rgba(0,0,0,0.45)",
+                    }}
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: "12px",
+                        }}
+                    >
+                        <h2
+                            style={{
+                                margin: 0,
+                                fontSize: "18px",
+                                fontWeight: "700",
+                            }}
+                        >
+                            {selectedNode.title || "Nodo senza titolo"}
+                        </h2>
+
+                        <button
+                            onClick={() => setSelectedNode(null)}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                color: "#94a3b8",
+                                cursor: "pointer",
+                                fontSize: "18px",
+                            }}
+                        >
+                            ✕
+                        </button>
+                    </div>
+
+                    {selectedNode.image && (
+                        <img
+                            src={`/storage/${selectedNode.image}`}
+                            alt={selectedNode.title || "Immagine nodo"}
+                            style={{
+                                width: "100%",
+                                borderRadius: "12px",
+                                marginBottom: "14px",
+                            }}
+                        />
+                    )}
+
+                    <p
+                        style={{
+                            fontSize: "14px",
+                            lineHeight: "1.6",
+                            color: "#cbd5e1",
+                        }}
+                    >
+                        {selectedNode.text}
+                    </p>
+
+                    <div
+                        style={{
+                            marginTop: "16px",
+                            paddingTop: "14px",
+                            borderTop: "1px solid #1e293b",
+                        }}
+                    >
+                        <strong>Scelte:</strong>
+
+                        {selectedNode.choices?.length > 0 ? (
+                            <ul
+                                style={{
+                                    marginTop: "10px",
+                                    paddingLeft: "18px",
+                                }}
+                            >
+                                {selectedNode.choices.map((choice) => (
+                                    <li
+                                        key={choice.id}
+                                        style={{
+                                            marginBottom: "8px",
+                                            color: "#93c5fd",
+                                        }}
+                                    >
+                                        {choice.text}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p
+                                style={{
+                                    color: "#fca5a5",
+                                    marginTop: "10px",
+                                }}
+                            >
+                                Nodo finale
+                            </p>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }
 
