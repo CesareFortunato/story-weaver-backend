@@ -12,6 +12,8 @@ class Node extends Model
         'text',
         'image',
         'is_start',
+        'position_x',
+        'position_y',
     ];
     public function story()
     {
