@@ -10,6 +10,24 @@
                     {{ $story->title }}
                 </p>
             </div>
+            <div class="flex gap-3 mt-3 text-sm flex-wrap">
+
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded border-2 border-yellow-400 bg-yellow-900"></div>
+                    <span class="text-gray-300">Nodo iniziale</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded border-2 border-red-500 bg-red-900"></div>
+                    <span class="text-gray-300">Nodo finale</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded border border-slate-600 bg-slate-800"></div>
+                    <span class="text-gray-300">Nodo normale</span>
+                </div>
+
+            </div>
 
             <a href="{{ route('stories.show', $story) }}"
                 class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800">
