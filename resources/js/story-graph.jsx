@@ -14,11 +14,17 @@ import {
 
 import "@xyflow/react/dist/style.css";
 
+// Recupera il div HTML dove verrà montato il grafo React.
 const rootElement = document.getElementById("story-graph-root");
 
+// Componente personalizzato che rappresenta graficamente un nodo della storia.
 function StoryNode({ data }) {
     const node = data.node;
+
+    // Conta quante scelte ha il nodo.
     const choicesCount = node.choices?.length ?? 0;
+
+    // Se un nodo non ha scelte viene considerato nodo finale.
     const isFinalNode = choicesCount === 0;
 
     return (
@@ -28,26 +34,34 @@ function StoryNode({ data }) {
                 maxWidth: "260px",
                 borderRadius: "14px",
                 overflow: "hidden",
+
+                // Cambia il bordo in base al tipo di nodo:
+                // start, finale o normale.
                 border: node.is_start
                     ? "2px solid #facc15"
                     : isFinalNode
                         ? "2px solid #ef4444"
                         : "1px solid #334155",
+
                 background: "#020617",
                 color: "#e5e7eb",
                 boxShadow: "0 18px 40px rgba(0,0,0,0.35)",
             }}
         >
+            {/* Punto di ingresso delle frecce */}
             <Handle type="target" position={Position.Top} />
 
             <div
                 style={{
                     padding: "10px 12px",
+
+                    // Cambia il colore dell'header in base al tipo di nodo.
                     background: node.is_start
                         ? "#713f12"
                         : isFinalNode
                             ? "#7f1d1d"
                             : "#1e293b",
+
                     fontWeight: "700",
                     fontSize: "14px",
                 }}
@@ -65,6 +79,7 @@ function StoryNode({ data }) {
                         color: "#cbd5e1",
                     }}
                 >
+                    {/* Mostra un'anteprima del testo del nodo */}
                     {node.text?.length > 90
                         ? node.text.substring(0, 90) + "..."
                         : node.text}
@@ -78,6 +93,7 @@ function StoryNode({ data }) {
                         flexWrap: "wrap",
                     }}
                 >
+                    {/* Badge con ID del nodo */}
                     <span
                         style={{
                             fontSize: "11px",
@@ -90,6 +106,7 @@ function StoryNode({ data }) {
                         ID {node.id}
                     </span>
 
+                    {/* Badge che indica se il nodo è finale o quante scelte contiene */}
                     <span
                         style={{
                             fontSize: "11px",
@@ -104,33 +121,40 @@ function StoryNode({ data }) {
                 </div>
             </div>
 
+            {/* Punto di uscita delle frecce */}
             <Handle type="source" position={Position.Bottom} />
         </div>
     );
 }
 
 function StoryGraph() {
+    // URL passati dalla blade tramite data-attribute.
     const graphUrl = rootElement.dataset.graphUrl;
     const positionUrlTemplate = rootElement.dataset.positionUrlTemplate;
     const nodeUrlTemplate = rootElement.dataset.nodeUrlTemplate;
 
+    // Stato dei nodi, delle frecce e del nodo selezionato.
     const [nodes, setNodes] = useState([]);
     const [edges, setEdges] = useState([]);
     const [selectedNode, setSelectedNode] = useState(null);
 
+    // Registra il componente personalizzato dei nodi per React Flow.
     const nodeTypes = useMemo(() => ({
         storyNode: StoryNode,
     }), []);
 
+    // Al caricamento del componente recupera i dati del grafo dal backend.
     useEffect(() => {
         fetchGraph();
     }, []);
 
+    // Recupera nodi e collegamenti dal backend.
     async function fetchGraph() {
         try {
             const response = await fetch(graphUrl);
             const json = await response.json();
 
+            // Aggiunge a ogni nodo il tipo custom "storyNode".
             const styledNodes = json.data.nodes.map((node) => ({
                 ...node,
                 type: "storyNode",
@@ -143,28 +167,33 @@ function StoryGraph() {
         }
     }
 
+    // Gestisce i cambiamenti dei nodi nel grafo.
     const onNodesChange = useCallback((changes) => {
         setNodes((currentNodes) =>
             applyNodeChanges(changes, currentNodes)
         );
     }, []);
 
+    // Gestisce i cambiamenti delle frecce nel grafo.
     const onEdgesChange = useCallback((changes) => {
         setEdges((currentEdges) =>
             applyEdgeChanges(changes, currentEdges)
         );
     }, []);
 
+    // Al click su un nodo, mostra il pannello laterale con i dettagli.
     function onNodeClick(event, node) {
         setSelectedNode(node.data.node);
     }
 
+    // Al doppio click su un nodo, apre la pagina di dettaglio/modifica del nodo.
     function onNodeDoubleClick(event, node) {
         const url = nodeUrlTemplate.replace("__NODE_ID__", node.id);
 
         window.location.href = url;
     }
 
+    // Quando termina il drag di un nodo, salva la nuova posizione nel backend.
     async function onNodeDragStop(event, node) {
         const url = positionUrlTemplate.replace("__NODE_ID__", node.id);
 
@@ -173,6 +202,8 @@ function StoryGraph() {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
+
+                    // Token CSRF necessario per le richieste PATCH in Laravel.
                     "X-CSRF-TOKEN": document
                         .querySelector('meta[name="csrf-token"]')
                         .getAttribute("content"),
@@ -200,11 +231,17 @@ function StoryGraph() {
                 onNodeClick={onNodeClick}
                 fitView
             >
+                {/* Sfondo del canvas */}
                 <Background />
+
+                {/* Controlli zoom e navigazione */}
                 <Controls />
+
+                {/* Mini mappa del grafo */}
                 <MiniMap />
             </ReactFlow>
 
+            {/* Pannello laterale mostrato quando viene selezionato un nodo */}
             {selectedNode && (
                 <div
                     style={{
@@ -241,6 +278,7 @@ function StoryGraph() {
                             {selectedNode.title || "Nodo senza titolo"}
                         </h2>
 
+                        {/* Chiude il pannello laterale */}
                         <button
                             onClick={() => setSelectedNode(null)}
                             style={{
@@ -255,6 +293,7 @@ function StoryGraph() {
                         </button>
                     </div>
 
+                    {/* Immagine del nodo, se presente */}
                     {selectedNode.image && (
                         <img
                             src={`/storage/${selectedNode.image}`}
@@ -267,6 +306,7 @@ function StoryGraph() {
                         />
                     )}
 
+                    {/* Testo completo del nodo */}
                     <p
                         style={{
                             fontSize: "14px",
@@ -286,6 +326,7 @@ function StoryGraph() {
                     >
                         <strong>Scelte:</strong>
 
+                        {/* Lista delle scelte del nodo selezionato */}
                         {selectedNode.choices?.length > 0 ? (
                             <ul
                                 style={{
@@ -306,6 +347,7 @@ function StoryGraph() {
                                 ))}
                             </ul>
                         ) : (
+                            // Se non ci sono scelte, il nodo è finale.
                             <p
                                 style={{
                                     color: "#fca5a5",
@@ -322,6 +364,7 @@ function StoryGraph() {
     );
 }
 
+// Monta il componente React solo se il div esiste nella pagina.
 if (rootElement) {
     createRoot(rootElement).render(<StoryGraph />);
 }
